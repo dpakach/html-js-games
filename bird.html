@@ -1,0 +1,125 @@
+<canvas id="gc" height="600" width="600"></canvas>
+<h1 id="scor"></h1>
+<p id="hint"></p>
+<script>
+  window.onload = function(){
+    canv = document.getElementById("gc");
+    ctx = canv.getContext("2d");
+    scor = document.getElementById("scor");
+    hint = document.getElementById("hint");
+    document.addEventListener("keydown", keyPush);
+    setInterval(game, 1000/20);
+  }
+
+  var bc = 25;
+  score = 0;
+  a = 9.8;
+  xv = 0;
+  px=10;
+  py=10;
+  bv=0.25;
+  yv=0.5;
+  gs=20;
+  tc=30;
+  hs=7;
+
+  incScore = true;
+  over = false;
+  hp = Math.floor(Math.random() * (tc-hs));
+
+  function game(){
+    bc = over ? bc : bc - 0.25 - (score * 0.05);
+    px+=xv;
+    py+=yv;
+    yv = over ? 0 : yv + 0.5 * 1000 * Math.pow(15/1000, 2);
+    if(bc < px && incScore){
+      score++;
+      incScore = false;
+    }
+    if(bc+2<0){
+      bc = tc -1;
+      hp = Math.floor(Math.random() *(tc-hs))-2;
+      incScore = true;
+    }
+
+
+    if((px>=bc && px<=bc+1) && !(py>=hp && py<(hp+hs)) ){
+      over = true;
+    }
+    if(py<1){
+      over = true;
+      yv = 0;
+    }
+    if(py>=tc-1){
+      over = true;
+      yv =0;
+    }
+    ctx.fillStyle ="black";
+    ctx.fillRect(0,0,canv.width,canv.height);
+
+    // ctx.fillstle = "cyan";
+    // for(var i = 0; i<30; i++){
+    //   for(var j = 0; j<30; j++){
+    //     bx = (i*gs);
+    //     by = (j*gs);
+    //     if ((i+j)%2 === 0){
+    //       ctx.fillRect(bx,by , gs+18, gs-2);
+    //     }
+    //   }
+    // }
+
+    ctx.fillStyle = "blue"
+    for(var i = 0; i<30; i++){
+      bx = (bc*gs);
+      by = (i*gs);
+      ctx.fillRect(bx,by , gs+18, gs-2);
+    }
+
+
+
+    ctx.fillStyle = "black"
+    for(var i = hp; i<hp+hs; i++){
+      bx = (bc*gs);
+      by = (i*gs);
+      ctx.fillRect(bx,by , gs+18, gs-2);
+    }
+
+    ctx.fillStyle = "red"
+    for(var i = 0; i<30; i++){
+      bx = i*gs;
+      by = 0
+      ctx.fillRect(bx,by , gs-2, gs-2);
+      bx = i*gs;
+      by = 29*gs;
+      ctx.fillRect(bx,by , gs-2, gs-2);
+    }
+
+
+
+    ctx.fillStyle = "orange"
+    ctx.fillRect(px*gs, py*gs, gs-2, gs-2);
+    text = over ? `GAME-OVER score: ${score}` : `SCORE : ${score}`;
+    scor.innerHTML = text;
+    if(over){
+      hint.innerHTML = 'Reload to play again';
+    }
+
+  }
+  function keyPush(evt){
+    switch(evt.keyCode) {
+      case 37:
+          px--;
+        break;
+      case 38:
+          py--;
+          yv = -0.75;
+        break;
+      case 39:
+          px++;
+        break;
+      case 40:
+            py++;
+        break;
+    }
+  }
+</script>
